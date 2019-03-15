@@ -1,3 +1,6 @@
+
+options(repos = c(CRAN = "https://cran.rstudio.com"))
+devtools::install_github("AdamSpannbauer/wordcloud2",force = TRUE)
 library(devtools)
 library(rsconnect)
 library(shinyalert)
@@ -5,7 +8,7 @@ library(ggplot2)
 library(shiny)
 library(shinythemes)
 library(leaflet)
-library(wordcloud2)
+require(wordcloud2)
 library(tm)
 library(rtweet)
 library(httr)
@@ -17,7 +20,7 @@ library(DT)
 source('text_mining.R')
 source('get_live_data.R')
 source('get_sentiment.R')
-devtools::install_github("AdamSpannbauer/wordcloud2",force = TRUE)
+
 
 shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
                   navbarPage(title='Starbucks Social Media Information',
