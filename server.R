@@ -77,7 +77,7 @@ server<-shinyServer(function(input,output,session){
     map<-leaflet(user_loc_df)%>%addProviderTiles(providers$Esri.WorldImagery)%>%
       addCircleMarkers(lng=~user_loc_df$longitude,lat=~user_loc_df$latitude,
                        radius=20,fillColor = getColor(user_loc_df$quoted_retweet_count),color = '#8B4513',
-                       fillOpacity = 0.8,popup = popup_tpl)%>%fitBounds(minLong,minLat,maxLong,maxLat)
+                       fillOpacity = 0.8,popup = popup_tpl,clusterOptions = markerClusterOptions())%>%fitBounds(minLong,minLat,maxLong,maxLat)
     map
   })
 
@@ -90,9 +90,17 @@ server<-shinyServer(function(input,output,session){
   })
   
   observeEvent(input$get_sentences,{
-    
-    shinyalert(text = get_sentences(strsplit(input$wc2_clicked_word,":")[[1]][1]),
+    sent = get_sentences(strsplit(input$wc2_clicked_word,":")[[1]][1])
+    shinyalert(   
+      text = if(is.null(sent)){
+      sent = "Not valid UTF Character"
+      sent
+    }
+    else{unique(get_sentences(strsplit(input$wc2_clicked_word,":")[[1]][1]))}
+      
+               ,
                closeOnClickOutside = TRUE, animation = 'slide-from-bottom')
+    
   })
   
   output$plot_emotion_twitter<-renderPlot({

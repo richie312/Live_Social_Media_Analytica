@@ -2,7 +2,7 @@
 get_words<-function(text){
   
   stopwords = read.delim("stopwords.txt",sep=',')
-  Text<-iconv(Text, "UTF-8", "UTF-8",sub='')
+  Text<-iconv(text, "UTF-8", "UTF-8",sub='')
   
   ##Clean the tweet for sentiment analysis
   #  remove html links, which are not required for sentiment analysis

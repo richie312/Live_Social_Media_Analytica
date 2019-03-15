@@ -40,7 +40,7 @@ shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
                                              ))
                                       ),
                              ## Next row
-                             fluidRow(column(6,leafletOutput('map',height='850px')),includeCSS('mystyle.css'),
+                             fluidRow(column(6,leafletOutput('map',height='600px')),includeCSS('mystyle.css'),
                                       column(6,
                                              fluidRow(helpText(h2("WordCloud", div(style = 'background-color:white;'))),
                                                      wordcloud2Output(outputId = "twitter_wordcloud",clickedWordInputId = "wc2_clicked_word",height = '250px'),div(style = "height:50px;"),

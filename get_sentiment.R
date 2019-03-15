@@ -75,11 +75,11 @@ get_sentences= function(word){
   if (grepl(word,strsplit(user_loc_df$text[i]," ")) == TRUE){
     sentences[i]=user_loc_df$text[i]
   }
-    else{sentences[i] = "This word cannot be traced back to tweets. It might be result of conversion from non-UTF character to UTF-8"}
+    else{}
       
-}
+  }
+  
   return(unique(sentences))
 }
 
-
-
+get_sentences('coffee')
