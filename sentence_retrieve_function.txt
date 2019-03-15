@@ -1,0 +1,4 @@
+ # word='caramel:1'
+ # 
+ # get_sentences(strsplit(word,":")[[1]][1])[!unlist(lapply(get_sentences(strsplit(word,":")[[1]][1]), is.null))]
+ #                                                                          

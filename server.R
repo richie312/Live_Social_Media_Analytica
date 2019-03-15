@@ -39,7 +39,7 @@ server<-shinyServer(function(input,output,session){
     return(data)
   })
   
-  output$table<-renderDataTable(daily_data())
+  output$table<-DT::renderDataTable(daily_data())
   output$map<-renderLeaflet({
     
     invalidateLater(100000,session)
@@ -85,10 +85,11 @@ server<-shinyServer(function(input,output,session){
     invalidateLater(100000,session)
     data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
     words<-get_words(data$text)
-    wordcloud2(words,size=0.6,color="random-light")
+    words<-words[words$freq>2,]
+    wordcloud2(words,size=1.5,color="random-light")
   })
   
-  observeEvent(input$get_sentences, {
+  observeEvent(input$get_sentences,{
     
     shinyalert(text = get_sentences(strsplit(input$wc2_clicked_word,":")[[1]][1]),
                closeOnClickOutside = TRUE, animation = 'slide-from-bottom')
@@ -110,6 +111,12 @@ server<-shinyServer(function(input,output,session){
             panel.grid.minor = element_blank(),axis.line = element_line(colour = "black"),legend.position = 'none')
     
     })
+  master_data<-reactive({data<-read.csv("youttube_starbucks_masterdata.csv",stringsAsFactors = FALSE)
+      return(data)})
+  output$Youtube_MasterData<-DT::renderDataTable(master_data())
+  Video_channel_ID<-reactive({data<-read.csv('video_channel_ith.csv',stringsAsFactors = FALSE)
+    return(data)})
+  output$Video_channel_ID<-DT::renderDataTable(Video_channel_ID())
 })
 
 

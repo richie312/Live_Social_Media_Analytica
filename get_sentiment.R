@@ -69,26 +69,17 @@ get_sentimentscore<-function(text){
 ## Retrace Function to sentence
 
 get_sentences= function(word){
-  # Instantiate empt;y list to store sentences from the loop
-  sentences = list()
+  # Instantiate empty list to store sentences from the loop
+  sentences=list()
   for (i in 1:length(user_loc_df$text)){
   if (grepl(word,strsplit(user_loc_df$text[i]," ")) == TRUE){
     sentences[i]=user_loc_df$text[i]
   }
+    else{sentences[i] = "This word cannot be traced back to tweets. It might be result of conversion from non-UTF character to UTF-8"}
+      
 }
-  return(sentences)
+  return(unique(sentences))
 }
-
-# word='about:1'
-# get_sentences(strsplit(word,":")[[1]][1])[!unlist(lapply(get_sentences(strsplit(word,":")[[1]][1]), is.null))]
-                                                                          
-
-#strsplit(string,":")[[1]][1]
-
-## Translate the language
-
-#library(googleLanguageR)
-
 
 
 

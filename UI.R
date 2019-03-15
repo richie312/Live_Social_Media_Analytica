@@ -1,6 +1,6 @@
 
 options(repos = c(CRAN = "https://cran.rstudio.com"))
-devtools::install_github("AdamSpannbauer/wordcloud2",force = TRUE)
+#devtools::install_github("AdamSpannbauer/wordcloud2",force = TRUE)
 library(devtools)
 library(rsconnect)
 library(shinyalert)
@@ -50,16 +50,25 @@ shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
                                              fluidRow(helpText(h2("Bar Plot/Sentiment")),
                                                       plotOutput(outputId='plot_emotion_twitter'),div(style = "height:100px;")))),
                             ## Next Row for Data Table
-                            fluidRow(DTOutput(outputId = 'table'))
+                            fluidRow(DT::dataTableOutput(outputId = 'table'))
                              
                              ),
                              
                              ## Next Page(Tab Panel)
-                             tabPanel('Youtube/Facebook',value="Youtube")
+                             tabPanel('Youtube Analytica',value="Youtube",
+
+                              fluidRow(column(8,DT::dataTableOutput(outputId="Youtube_MasterData"))),
+                      
+                              fluidRow(column(6,DT::dataTableOutput(outputId="Video_channel_ID")),
+                                column(6,plotOutput(outputId="Video_ID_plot")))
+
+                                )
+
+                              )
                              
                            ))
         
-        )
+        
                   
         
         

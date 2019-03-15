@@ -1,8 +1,8 @@
 
 get_words<-function(text){
   
-  Text<- text
-  Text<-iconv(Text, "latin1", "UTF-8")
+  stopwords = read.delim("stopwords.txt",sep=',')
+  Text<-iconv(Text, "UTF-8", "UTF-8",sub='')
   
   ##Clean the tweet for sentiment analysis
   #  remove html links, which are not required for sentiment analysis
@@ -26,6 +26,9 @@ get_words<-function(text){
   Corpus<-tm_map(Corpus, stripWhitespace)
   # Remove Punctuation
   Corpus=tm_map(Corpus,removePunctuation)
+  Corpus = tm_map(Corpus, removeWords, stopwords('SMART'))
+  Corpus = tm_map(Corpus, removeWords, stopwords)
+  
   ## Document term matrix
   myDTM = TermDocumentMatrix(Corpus)
   m = as.matrix(myDTM)
@@ -33,7 +36,6 @@ get_words<-function(text){
   d<-data.frame(word=names(v),freq=v)
   return(d)
 }
-
 
 
 
