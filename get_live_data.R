@@ -28,7 +28,7 @@ get_live_data<-function(topic,minute){
   # Stream data where it will be stored
   filename <- "live.json"
   # Function to call the data
-  rt <- stream_tweets(q = topic,timeout = streamtime,file_name = filename)
+  rt <- stream_tweets(q = topic,timeout = streamtime,file_name = filename,token)
   # parse the data
   live_data<-parse_stream(filename)
   

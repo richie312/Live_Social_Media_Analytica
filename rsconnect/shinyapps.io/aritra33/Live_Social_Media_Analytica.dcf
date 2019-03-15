@@ -5,8 +5,8 @@ account: aritra33
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 789446
-bundleId: 1939567
+bundleId: 1942130
 url: https://aritra33.shinyapps.io/Live_Social_Media_Analytica/
-when: 1552571289.182
+when: 1552650064.73457
 asMultiple: FALSE
 asStatic: FALSE

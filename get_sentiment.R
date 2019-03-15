@@ -2,7 +2,7 @@
 get_sentimentscore<-function(text){
 
   Text<- text
-  Text<-iconv(Text, "latin1", "UTF-8")
+  Text<-iconv(Text, "latin1", "UTF-8",sub='')
   
   
   ##Clean the tweet for sentiment analysis

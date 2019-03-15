@@ -34,7 +34,7 @@ token <- createTokenNoBrowser("RichieApp",credentials$V2[1],credentials$V2[2],
 # Define the length of the stream
 streamtime = 0.5*60
 # Stream data where it will be stored
-filename <- "live.json"
+filename <- "live1.json"
 # Function to call the data
 rt <- stream_tweets(q = 'starbucks',timeout = streamtime,file_name = filename)
 # parse the data
