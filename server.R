@@ -39,7 +39,7 @@ server<-shinyServer(function(input,output,session){
     return(data)
   })
   
-  output$table<-DT::renderDataTable(daily_data())
+  output$table<-DT::renderDataTable(daily_data(),options=list(lengthMenu = c(5, 30, 50)))
   output$map<-renderLeaflet({
     
     invalidateLater(100000,session)
@@ -145,30 +145,89 @@ server<-shinyServer(function(input,output,session){
       
       data_filter<-data%>%filter(channelTitle %in% top$Channel_Title)
       
-      return(data_filter[,1:4])})
+      return(datatable(data_filter[,1:4],options = list(lengthMenu = c(6, 30, 50))))
+             })
   output$video_stats<-renderPlot({
     
     video_stats<-read.csv('video_stat.csv',stringsAsFactors = FALSE)
-    ggplot(data=video_stats,aes(x=video_stats$id,y=video_stats$dislike_Count))+
-      geom_bar(aes(fill=Plot_Result$Degree_of_Emotion),stat="identity",width=0.4)+
-      scale_fill_brewer(palette="Dark2")+xlab("Degree of Emotion")+
-      ylab("Number of Tweets")+
+    
+    data<-video_stats[video_stats$id == input$video_ID,]
+    labels=colnames(data)
+    labels_count=labels[3:6]
+    values=c(data$like_Count,data$favorite_Count,
+             data$comment_Count,data$dislike_Count)
+    values=as.numeric(values)
+    data_1=cbind(labels_count,values)
+    colnames(data_1)= c('labels','values')
+    data_1=as.data.frame(data_1)
+    data_1$values=as.character(data_1$values)
+    data_1$values = as.integer(data_1$values)
+    
+    ggplot(data=data_1,aes(x=data_1$labels,y=data_1$values))+
+      geom_bar(aes(fill=data_1$labels),stat="identity",width=0.4)+
+      scale_fill_brewer(palette="Dark2")+xlab("Count")+
+      ylab("Video(ith)")+
       coord_flip()+
-      geom_text(aes(label=Plot_Result$Number_of_Tweets),
+      geom_text(aes(label=data_1$values),
                 vjust=-0.5,colour="brown",stat="identity")+theme_bw() +
+      theme(text = element_text(size=15),
+            axis.text.x = element_text(angle=0, hjust=1)) +
       theme(panel.border = element_blank(), panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),axis.line = element_line(colour = "black"),legend.position = 'none')
-    
-    
-    
   })
   
+  output$video_Popularity_Ratio<-renderPlot({
+    video_stats<-read.csv('video_stat.csv',stringsAsFactors = FALSE)
+    data<-video_stats[video_stats$id == input$video_ID,]
+    data$view_Count=as.numeric(data$view_Count)
+    data$like_Count=as.numeric(data$like_Count)
+    if (is.na(data$like_Count)){
+      data$like_Count = 0
+    }
+    value = data$like_Count/data$view_Count
+    gg.gauge(value*100,breaks=c(0,30,70,100))    
+    })
   
+  output$video_Engagement_Ratio<-renderPlot({
+    video_stats<-read.csv('video_stat.csv',stringsAsFactors = FALSE)
+    data<-video_stats[video_stats$id == input$video_ID,]
+    data$view_Count=as.numeric(data$view_Count)
+    data$comment_Count=as.numeric(data$comment_Count)
+    if (is.na(data$comment_Count)){
+      data$like_Count = 0
+    }
+    value = data$comment_Count/data$view_Count
+    gg.gauge(value*100,breaks=c(0,30,70,100))    
+  })
   
+  output$video_dislike_Ratio<-renderPlot({
+    video_stats<-read.csv('video_stat.csv',stringsAsFactors = FALSE)
+    data<-video_stats[video_stats$id == 'dxoMBvT-eJs',]
+    data$like_Count=as.numeric(data$like_Count)
+    if (is.na(data$like_Count)){
+      data$like_Count = 0
+    }
+    data$dislike_Count=as.numeric(data$dislike_Count)
+    if (is.na(data$dislike_Count)){
+      data$dislike_Count = 0
+    }
+    value = data$dislike_Count/data$like_Count
+    gg.gauge(if(value == 'NaN'){value = 0}else{value}*100,breaks=c(0,30,70,100))    
+  })
+  
+
   output$Youtube_MasterData<-DT::renderDataTable(master_data())
   Video_channel_ID<-reactive({data<-read.csv('video_channel_ith.csv',stringsAsFactors = FALSE)
     return(data)})
   output$Video_channel_ID<-DT::renderDataTable(Video_channel_ID())
+  
+  # Render Source Link for the YouTube Ratio Metrics
+  url <- a("Youtube Metrics", href="https://tubularinsights.com/3-metrics-youtube-success/")
+  output$source_url<-renderUI(
+    tagList("Source: ", url)
+  )
+  
+  
 })
 
 

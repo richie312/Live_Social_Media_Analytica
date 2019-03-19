@@ -57,12 +57,33 @@ shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
                              ## Next Page(Tab Panel)
                              tabPanel('Youtube Analytica',value="Youtube",
 
-                              fluidRow(column(6,DT::dataTableOutput(outputId="Youtube_MasterData")),
+                              fluidRow(column(6,
+                                              
+                                      helpText(h3('Top Most Occuring Channel on Starbuck: 
+                                                  CNBC, TheEllenShow,BuzzFeed,Starbucks & ThreadBanger')),        
+                                      DT::dataTableOutput(outputId="Youtube_MasterData")),
+                                       
                                        column(4,
-                                       fluidRow(textInput('video_ID',value='2VINjj4k4QQ',label='paste video ID')),
+                                              helpText(h3('YouTube Video Statistics'),align='center'),
+                                        
+                                       fluidRow(textInput('video_ID',value='_FGUkxn5kZQ',label='paste video ID'),align='right'),
                                        fluidRow(plotOutput("video_stats")))),
                       
-                              fluidRow(column(6,DT::dataTableOutput(outputId="Video_channel_ID")))
+                              fluidRow(
+                                column(4,
+                                       fluidRow(helpText(h3('Popularity Ratio'))),
+                                       fluidRow(plotOutput('video_Popularity_Ratio'))),
+                                column(4,
+                                       fluidRow(helpText(h3('Engagement Ratio'))),
+                                       plotOutput('video_Engagement_Ratio')),
+                                column(4,
+                                       fluidRow(helpText(h3('Like-Dislike Ratio'))),
+                                       plotOutput('video_dislike_Ratio')),
+                                       fluidRow(uiOutput('source_url'))  
+                                ),
+                              
+                              fluidRow(column(6,helpText(h2('Words Polarity of Selected Video ID'))),
+                                       column(6,helpText(h2('YTD...'))))
 
                                 )
 

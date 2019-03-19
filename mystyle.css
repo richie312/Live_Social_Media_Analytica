@@ -3,31 +3,31 @@ h1 {
   font-family: 'sans-serif', normal;
   font-weight: 900;
   line-height: 1.1;
-  color: #FF7D33;
+  color: #008080;
 }
 h2 {
   font-family: 'sans-serif', normal;
   font-weight: 700;
   line-height: 1.1;
-  color: #FF7D33;
+  color: #008080;
 }
 h3 {
   font-family: 'sans-serif', normal;
   font-weight: 500;
   line-height: 1.1;
-  color: #FF7D33;
+  color: #008080;
 }
 h5 {
   font-family: 'sans-serif', normal;
   font-weight: 500;
   line-height: 1.1;
-  color: #FF7D33;
+  color: #008080;
 }
 h6 {
   font-family: 'sans-serif', normal;
   font-weight: 500;
   line-height: 1.1;
-  color: #FF7D33;
+  color: #008080;
 }
 .custom-popup .leaflet-popup-content-wrapper {
   background:#2c3e50;
