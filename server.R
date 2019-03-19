@@ -120,7 +120,51 @@ server<-shinyServer(function(input,output,session){
     
     })
   master_data<-reactive({data<-read.csv("youttube_starbucks_masterdata.csv",stringsAsFactors = FALSE)
-      return(data)})
+      data<-data%>%select('video_id','publishedAt','title','channelTitle','thumbnails.medium.url')
+      # Title Frequency Distribution
+      words<-strsplit(data$channelTitle," ")
+      #Instantiate empty list
+      bag_of_words = vector('list',nrow(data))
+      
+      for (i in 1:nrow(data)){
+        bag_of_words[[i]]= data$channelTitle[i]
+      }
+      # Count frequenct of each title
+      title_freq = table(unlist(bag_of_words))
+      
+      ## Make a dataframe for title and frequency
+      words=names(title_freq)
+      freq=as.integer(title_freq)
+      word_table=cbind(words,freq)
+      word_table=as.data.frame(word_table,stringsAsFactors = FALSE)
+      word_table$freq=as.numeric(word_table$freq)
+      word_table_order=word_table%>%arrange(desc(word_table$freq))
+      colnames(word_table_order)=c("Channel_Title","Frequency")
+      top = head(word_table_order)
+      ## Filter the master_data with channel_title(top frequency)
+      
+      data_filter<-data%>%filter(channelTitle %in% top$Channel_Title)
+      
+      return(data_filter[,1:4])})
+  output$video_stats<-renderPlot({
+    
+    video_stats<-read.csv('video_stat.csv',stringsAsFactors = FALSE)
+    ggplot(data=video_stats,aes(x=video_stats$id,y=video_stats$dislike_Count))+
+      geom_bar(aes(fill=Plot_Result$Degree_of_Emotion),stat="identity",width=0.4)+
+      scale_fill_brewer(palette="Dark2")+xlab("Degree of Emotion")+
+      ylab("Number of Tweets")+
+      coord_flip()+
+      geom_text(aes(label=Plot_Result$Number_of_Tweets),
+                vjust=-0.5,colour="brown",stat="identity")+theme_bw() +
+      theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),axis.line = element_line(colour = "black"),legend.position = 'none')
+    
+    
+    
+  })
+  
+  
+  
   output$Youtube_MasterData<-DT::renderDataTable(master_data())
   Video_channel_ID<-reactive({data<-read.csv('video_channel_ith.csv',stringsAsFactors = FALSE)
     return(data)})

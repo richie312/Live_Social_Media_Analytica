@@ -57,10 +57,12 @@ shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
                              ## Next Page(Tab Panel)
                              tabPanel('Youtube Analytica',value="Youtube",
 
-                              fluidRow(column(8,DT::dataTableOutput(outputId="Youtube_MasterData"))),
+                              fluidRow(column(6,DT::dataTableOutput(outputId="Youtube_MasterData")),
+                                       column(4,
+                                       fluidRow(textInput('video_ID',value='2VINjj4k4QQ',label='paste video ID')),
+                                       fluidRow(plotOutput("video_stats")))),
                       
-                              fluidRow(column(6,DT::dataTableOutput(outputId="Video_channel_ID")),
-                                column(6,plotOutput(outputId="Video_ID_plot")))
+                              fluidRow(column(6,DT::dataTableOutput(outputId="Video_channel_ID")))
 
                                 )
 
@@ -73,3 +75,20 @@ shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
         
         
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
