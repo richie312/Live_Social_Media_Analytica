@@ -11,7 +11,6 @@ library(leaflet)
 require(wordcloud2)
 library(tm)
 library(rtweet)
-library(httr)
 library(readr)
 library(ggmap)
 library(leaflet)
@@ -20,7 +19,7 @@ library(DT)
 source('text_mining.R')
 source('get_live_data.R')
 source('get_sentiment.R')
-
+source('ggplot_gauge.R')
 
 shinyUI(fluidPage(theme = shinytheme('cerulean'),includeCSS('mystyle.css'),
                   navbarPage(title='Starbucks Social Media Information',

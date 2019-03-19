@@ -32,9 +32,9 @@ token <- createTokenNoBrowser("RichieApp",credentials$V2[1],credentials$V2[2],
 
 # Twitter Live Stream
 # Define the length of the stream
-streamtime = 0.5*60
+streamtime = 3*60
 # Stream data where it will be stored
-filename <- "live1.json"
+filename <- "live.json"
 # Function to call the data
 rt <- stream_tweets(q = 'starbucks',timeout = streamtime,file_name = filename)
 # parse the data
@@ -47,7 +47,7 @@ live_data$geo_coords
 register_google(credentials$V2[credentials$V1=='geocode_api'])
 
 #instantiate the empty dataframe()
-live_data = live_data %>%filter(geo_coor != 'Universe' & location != 'WORLDWIDE')
+live_data = live_data %>%filter(geo_coords != 'Universe' & location != 'WORLDWIDE')
 
 ## Instantiate two list
 

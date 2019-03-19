@@ -1,4 +1,8 @@
 
+token<-create_token(app = 'RichieApp',consumer_key = credentials$V2[1],
+                    consumer_secret = credentials$V2[[2]],
+                    access_token = credentials$V2[[3]],
+                    access_secret = credentials$V2[[4]])
 
 ## Read the credentials
 credentials = read.delim2("oauth_details.txt",sep=',',header = FALSE)
@@ -28,7 +32,7 @@ get_live_data<-function(topic,minute){
   # Stream data where it will be stored
   filename <- "live.json"
   # Function to call the data
-  rt <- stream_tweets(q = topic,timeout = streamtime,file_name = filename,token)
+  rt <- stream_tweets(q = topic,timeout = streamtime,file_name = filename)
   # parse the data
   live_data<-parse_stream(filename)
   
@@ -40,7 +44,7 @@ get_live_data<-function(topic,minute){
   
   #instantiate the empty dataframe()
   live_data = live_data %>%filter(location != 'Universe' & location != 'WORLDWIDE')
-  
+  nrow(live_data)
   ## Instantiate two list
   
   longitude = rep(c(0,nrow(live_data)))
@@ -55,10 +59,16 @@ get_live_data<-function(topic,minute){
     )
   }
   
-  ## Add the list in the live_data dataframe
-  live_data$longitude=longitude
-  live_data$latitude = latitude
+  longitude1 = vector('list',nrow(live_data))
+  latitude1 = vector('list',nrow(live_data))
+  for(i in 1:nrow(live_data)){
+  longitude1[[i]]<- if (is.na(longitude[i])){!longitude[i]}else{longitude[i]}
+  latitude1[[i]]<- if (is.na(latitude[i])){!latitude[i]}else{latitude[i]}
+  }
   
+  ## Add the list in the live_data dataframe
+  live_data$longitude=longitude1
+  live_data$latitude = latitude1
   # Convert the lon and lat into numeric value
   live_data$longitude=as.numeric(live_data$longitude)
   live_data$latitude=as.numeric(live_data$latitude)

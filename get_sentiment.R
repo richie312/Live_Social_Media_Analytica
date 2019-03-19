@@ -80,5 +80,3 @@ get_sentences= function(word){
   
   return(unique(sentences))
 }
-
-get_sentences('coffee')
