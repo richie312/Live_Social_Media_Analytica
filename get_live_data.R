@@ -1,12 +1,14 @@
 
-token<-create_token(app = 'RichieApp',consumer_key = credentials$V2[1],
-                    consumer_secret = credentials$V2[[2]],
-                    access_token = credentials$V2[[3]],
-                    access_secret = credentials$V2[[4]])
-
 ## Read the credentials
 credentials = read.delim2("oauth_details.txt",sep=',',header = FALSE)
 credentials$V2=as.character(credentials$V2)
+
+
+# token<-create_token(app = 'RichieApp',consumer_key = credentials$V2[1],
+#                     consumer_secret = credentials$V2[[2]],
+#                     access_token = credentials$V2[[3]],
+#                     access_secret = credentials$V2[[4]])
+
 
 createTokenNoBrowser<- function(appName, consumerKey, consumerSecret, 
                                 accessToken, accessTokenSecret) {

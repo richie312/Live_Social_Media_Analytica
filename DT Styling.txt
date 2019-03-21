@@ -1,0 +1,5 @@
+formatStyle(
+                                        'quoted_followers_count',
+                                        target = 'row',
+                                        backgroundColor = styleEqual(c(0, 1), c('gray', 'yellow'))
+                                      )

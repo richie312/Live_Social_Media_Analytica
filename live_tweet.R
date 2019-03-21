@@ -122,7 +122,7 @@ leaflet(user_loc_df)%>%addProviderTiles(providers$Esri.WorldImagery)%>%
   addCircleMarkers(lng=~user_loc_df$longitude,lat=~user_loc_df$latitude,
                    radius=20,fillColor = getColor(user_loc_df$quoted_retweet_count),color = '#8B4513',
                    fillOpacity = 0.8,popup = popup_tpl)%>%
-  fitBounds(minLong,minLat,maxLong,maxLat)
+  fitBounds(minLong,maxLong,minLat,maxLat)
 
 
 

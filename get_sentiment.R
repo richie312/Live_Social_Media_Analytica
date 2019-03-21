@@ -68,6 +68,7 @@ get_sentimentscore<-function(text){
 ## Retrace Function to sentence
 
 get_sentences= function(word){
+  user_loc_df=read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
   # Instantiate empty list to store sentences from the loop
   sentences=list()
   for (i in 1:length(user_loc_df$text)){
