@@ -1,5 +1,5 @@
 library(ggplot2)
-gg.gauge <- function(pos,breaks=c(0,30,70,100)) {
+gg.gauge <- function(pos,breaks=c(0,x,y,z)) {
   get.poly <- function(a,b,r1=0.5,r2=1.0) {
     th.start <- pi*(1-a/100)
     th.end   <- pi*(1-b/100)
@@ -23,7 +23,8 @@ gg.gauge <- function(pos,breaks=c(0,30,70,100)) {
           axis.ticks=element_blank(),
           panel.grid=element_blank(),
           panel.border=element_blank()) 
-}
 
+  }
 
-gg.gauge(0.88*100,breaks=c(0,30,70,100))
+value=0.08
+gg.gauge(value*100,breaks=c(0,50,70,100))

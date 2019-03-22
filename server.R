@@ -16,14 +16,55 @@ server<-shinyServer(function(input,output,session){
     data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
     data = data%>%select('name', 'location',
                           'created_at','text','quoted_followers_count','quoted_retweet_count')
-    data$text=iconv(data$text, "latin1", "UTF-8")
+    data$text=iconv(data$text, "latin1", "ASCII", sub="")
+    # Instantiate empty list for storing the text polarity score
+    polarity = vector('list',nrow(data))
+    for (i in 1:nrow(data)){
+    polarity[i] = as.character(get_sentimentscore(data$text[i])$Degree_of_Emotion[get_sentimentscore(data$text[i])$Number_of_Tweets>0])}
+    data$polarity=polarity
     return(data)
   })
   
-  output$table<-DT::renderDataTable(daily_data(),options=list(lengthMenu = c(5, 30, 50),
-                          rowCallback = I('function(row,data){
-                          max(daily_data()$quoted_followers_count)
-                          $("td", row).css("background", "orange");}')))
+  output$Tweets_Count<-renderText({
+    invalidateLater(100000,session)
+    data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
+    twitter_data<-get_sentimentscore(data$text)
+    sum_total<-sum(twitter_data$Number_of_Tweets)
+    return(sum_total)
+  })
+  
+  output$`Positive_Tweet(%)`<- renderText({
+    invalidateLater(100000,session)
+    data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
+    twitter_data<-get_sentimentscore(data$text)
+    positive<-sum(twitter_data$Number_of_Tweets[twitter_data$Degree_of_Emotion=='Pos'|twitter_data$Degree_of_Emotion=='vPos'])
+    positive_percent<-(positive/sum(twitter_data$Number_of_Tweets))*100
+    positive_percent<-round(positive_percent,2)
+    return(positive_percent)
+  })
+  
+  output$`Negative_Tweet(%)`<- renderText({
+    invalidateLater(100000,session)
+    data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
+    twitter_data<-get_sentimentscore(data$text)
+    negative<-sum(twitter_data$Number_of_Tweets[twitter_data$Degree_of_Emotion=='vNeg'|twitter_data$Degree_of_Emotion=='Neg'])
+    negative_percent<-(negative/sum(twitter_data$Number_of_Tweets))*100
+    negative_percent<-round(negative_percent,2)
+    return(negative_percent)
+  })
+  
+  output$`Neutral_Tweet(%)`<- renderText({
+    invalidateLater(100000,session)
+    data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
+    twitter_data<-get_sentimentscore(data$text)
+    neutral_percent<-(twitter_data$Number_of_Tweets[twitter_data$Degree_of_Emotion=='Neutral']/sum(twitter_data$Number_of_Tweets))*100
+    neutral_percent<-round(neutral_percent,2)
+    return(neutral_percent)
+  })
+  
+  
+  
+  output$table<-DT::renderDataTable(daily_data(),options=list(lengthMenu = c(5, 30, 50)))
   
   output$map<-renderLeaflet({
     
@@ -71,7 +112,7 @@ server<-shinyServer(function(input,output,session){
     data = read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
     words<-get_words(data$text)
     words<-words[words$freq>1,]
-    wordcloud2(words,size=1.5,color="random-light")
+    wordcloud2(words,size=2,color="random-light",shape='triangle')
   })
   
   observeEvent(input$get_sentences,{
@@ -95,11 +136,11 @@ server<-shinyServer(function(input,output,session){
 
     ggplot(data=Plot_Result,aes(x=reorder(Plot_Result$Degree_of_Emotion,Plot_Result$Number_of_Tweets),y=Plot_Result$Number_of_Tweets))+
       geom_bar(aes(fill=Plot_Result$Degree_of_Emotion),stat="identity",width=0.4)+
-      scale_fill_brewer(palette="YlOrRd")+xlab("Degree of Emotion")+
+      scale_fill_brewer(palette="YlGnBu")+xlab("Degree of Polarity")+
       ylab("Number of Tweets")+
       coord_flip()+
       geom_text(aes(label=Plot_Result$Number_of_Tweets),
-                vjust=-0.5,colour="brown",stat="identity")+theme_bw() +
+                vjust=-2.0,colour="brown",stat="identity")+theme_bw() +
       theme(text = element_text(size=15),
             axis.text.x = element_text(angle=0, hjust=1))+
       theme(panel.border = element_blank(), panel.grid.major = element_blank(),
@@ -171,7 +212,7 @@ server<-shinyServer(function(input,output,session){
     if (is.na(data$like_Count)){
       data$like_Count = 0
     }
-    value = data$like_Count/data$view_Count
+    value = data$like_Count/(data$view_Count/10)
     gg.gauge(value*100,breaks=c(0,30,70,100))    
     })
   
@@ -183,7 +224,7 @@ server<-shinyServer(function(input,output,session){
     if (is.na(data$comment_Count)){
       data$like_Count = 0
     }
-    value = data$comment_Count/data$view_Count
+    value = data$comment_Count/(data$view_Count/10)
     gg.gauge(value*100,breaks=c(0,30,70,100))    
   })
   
@@ -315,6 +356,40 @@ server<-shinyServer(function(input,output,session){
     terms<-get_Noun_freq(freq=input$Adverb_Freq)
     wordcloud2(terms,size=1.5,color="random-light")
   })
+  
+  output$Bigram<-renderPlot({
+    data = get_bigram(batch1_comments$comments)
+    ggplot(data=data,aes(x=reorder(data$word,data$frequency),y=data$frequency))+
+      geom_bar(aes(fill=data$word),stat="identity",width=0.4)+
+      scale_fill_brewer(palette="RdYlGn",direction = -1)+xlab("Bigram Terms")+
+      ylab("Apperance of Terms in the Corpus")+
+      coord_flip()+
+      geom_text(aes(label=data$frequency),
+                vjust=-2.9,colour="brown",stat="identity")+theme_bw() +
+      theme(text = element_text(size=15),
+            axis.text.x = element_text(angle=0, hjust=1))+
+      theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),axis.line = element_line(colour = "black"),legend.position = 'none')
+  })
+    
+    output$Trigram<-renderPlot({
+      data = get_trigram(batch1_comments$comments)
+      ggplot(data=data,aes(x=reorder(data$word,data$frequency),y=data$frequency))+
+        geom_bar(aes(fill=data$word),stat="identity",width=0.4)+
+        scale_fill_brewer(palette="RdYlGn",direction = -1)+xlab("Trigram Terms")+
+        ylab("Apperance of Terms in the Corpus")+
+        coord_flip()+
+        geom_text(aes(label=data$frequency),
+                  vjust=-4.0,colour="brown",stat="identity")+theme_bw() +
+        theme(text = element_text(size=15),
+              axis.text.x = element_text(angle=0, hjust=1))+
+        theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),axis.line = element_line(colour = "black"),legend.position = 'none')
+      
+    
+  })
+  
+  
   
 })
 

@@ -1,8 +1,9 @@
 
 get_words<-function(text){
-  
-  stopwords = read.delim("stopwords.txt",sep=',')
-  Text<-iconv(text, "UTF-8", "UTF-8",sub='')
+  # user_loc_df<-read.csv('user_loc_df.csv',stringsAsFactors = FALSE)
+  # Text<-user_loc_df$text
+  # stopwords = read.delim("stopwords.txt",sep=',')
+  Text<-iconv(text, "latin1", "ASCII",sub='')
   
   ##Clean the tweet for sentiment analysis
   #  remove html links, which are not required for sentiment analysis
@@ -13,11 +14,16 @@ get_words<-function(text){
   tweet5=gsub("RT|via","",tweet4)
   tweet6=gsub("[[:digit:]]","",tweet5)
   tweet7=gsub("'\'"," ", tweet6)
-  tweet7<-tweet7%>%data.frame()
-  colnames(tweet7)<-c("Tweets")
+  tweet8=gsub("[[:punct:]]","",tweet7)
+  tweet9=gsub("<","",tweet8)
+  tweet10=gsub(">","",tweet9)
+  tweet11=gsub("+","",tweet9)
+  
+  tweet8<-tweet8%>%data.frame()
+  colnames(tweet8)<-c("Tweets")
   ## Load the tm package to clean the corpus
   ## Corpus
-  Corpus=Corpus(VectorSource(tweet7$Tweets))
+  Corpus=Corpus(VectorSource(tweet8$Tweets))
   ## Convert to plain text document
   Corpus=tm_map(Corpus,PlainTextDocument)
   ## lower case
@@ -36,6 +42,5 @@ get_words<-function(text){
   d<-data.frame(word=names(v),freq=v)
   return(d)
 }
-
 
 

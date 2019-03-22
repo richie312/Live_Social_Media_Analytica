@@ -45,6 +45,11 @@ pos_term<-tagged_sents(doc)
 
 save(pos_tags, file = "pos_tags.RData")
 saveRDS(pos_tags,file='pos_tags.RDS')
+
+# lOAD the saved model for pos_tags
+
+pos_tags = readRDS('pos_tags.RDS')
+
 #  Separate the POStagging and terms for each sentence and combine them into once dataframe.
 
 pos_term<-vector('list',length(pos_tags))
@@ -101,13 +106,75 @@ return(Adverb_freq)
 }
 
 
-###################################333
-# ## NGrams
-# s <- "The quick brown fox jumps over the lazy dog"
-# ## Split into words:
-# w <- strsplit(s, " ", fixed = TRUE)[[1L]]
-# ## Word tri-grams:
-# ngrams(w, 2L)
-# 
-# ## Word tri-grams pasted together:
-# vapply(ngrams(w, 3L), paste, "", collapse = " ")
+############################################################################################################
+# ## NGrams Plotting
+get_bigram<-function(text){
+  sentences<-text
+  # Clean
+  clean<-function(sentences){
+    text1=gsub("https://","",sentences)
+    text2= gsub(",","",text1)
+    text3=gsub("#","",text2)
+    text4=gsub(">","",text3)
+    text5=gsub("<","",text4)
+    text6=gsub("/","",text5)
+    text7=gsub("[[:punct:]]","",text6)
+      
+  }
+  
+  ## Corpus
+  corpus = VCorpus(VectorSource(clean(sentences)))
+  corpus = tm_map(corpus, content_transformer(tolower))
+  corpus = tm_map(corpus, removeWords, stopwords("english"))
+  ## Bigram Tokenizer function
+  Bigramtokenizer<-function(x){
+    unlist(lapply(ngrams(words(x),2),paste,collapse =" "),use.names = FALSE)
+  }
+  ## Creating doc matrix
+  bigramdtm <- TermDocumentMatrix(corpus,control = list(tokenize = Bigramtokenizer))
+  # Find frequency
+  bigramf <- findFreqTerms(bigramdtm,lowfreq = 10)
+  # Convert it into the data form
+  Bigram_Terms<-rowSums(as.matrix(bigramdtm[bigramf,]))
+  Bigram_Terms<-data.frame(word=names(Bigram_Terms),frequency=Bigram_Terms)
+  return(Bigram_Terms)
+
+}
+
+get_trigram<-function(text){
+  
+  sentences<-text
+  # Clean
+  clean<-function(sentences){
+    text1=gsub("https://","",sentences)
+    text2= gsub(",","",text1)
+    text3=gsub("#","",text2)
+    text4=gsub(">","",text3)
+    text5=gsub("<","",text4)
+    text6=gsub("/","",text5)
+    text7=gsub("[[:punct:]]","",text6)
+    
+  }
+  
+  ## Corpus
+  corpus = VCorpus(VectorSource(clean(sentences)))
+  corpus = tm_map(corpus, content_transformer(tolower))
+  corpus = tm_map(corpus, removeWords, stopwords("english"))
+  
+  ## Bigram Tokenizer function
+  Trigramtokenizer<-function(x){
+    unlist(lapply(ngrams(words(x),3),paste,collapse =" "),use.names = FALSE)
+  }
+  ## Creating doc matrix
+  Trigramdtm <- TermDocumentMatrix(corpus,control = list(tokenize = Trigramtokenizer))
+  # Find frequency
+  Trigramf <- findFreqTerms(Trigramdtm,lowfreq = 5)
+  # Convert it into the data form
+  Trigram_Terms<-rowSums(as.matrix(Trigramdtm[Trigramf,]))
+  Trigram_Terms<-data.frame(word=names(Trigram_Terms),frequency=Trigram_Terms)
+  return(Trigram_Terms)
+  
+}
+
+
+
